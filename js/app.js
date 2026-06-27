@@ -108,11 +108,6 @@ function setupEventListeners() {
   if (btnPriceBack) {
     btnPriceBack.addEventListener('click', () => showView('view-home'));
   }
-    if (confirm('¿Deseas salir? Perderás los cambios no guardados.')) {
-      showView('view-home');
-      renderHistory();
-    }
-  });
 
   // Acciones de cámara/galería
   const btnCamera = document.getElementById('btn-camera');

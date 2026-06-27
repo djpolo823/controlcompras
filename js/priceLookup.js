@@ -10,6 +10,15 @@
   const DEBOUNCE_MS = 150;
   const STOP_WORDS = new Set(['de', 'del', 'la', 'el', 'los', 'las', 'y', 'o', 'en', 'con']);
 
+  // Safe wrapper: uses global Toast if available, otherwise logs to console
+  const toast = (msg, type = 'info') => {
+    if (typeof Toast !== 'undefined' && Toast && typeof Toast.show === 'function') {
+      Toast.show(msg, type);
+    } else {
+      console.warn('[priceLookup toast]', type, msg);
+    }
+  };
+
   // ----- Runtime State -----
   let purchaseHistory = [];
   let productIndex = {};
@@ -83,16 +92,29 @@
   };
 
   const fetchHistory = async () => {
-    const scriptUrl = Storage.getScriptUrl();
+    const scriptUrl = (typeof Storage !== 'undefined') ? Storage.getScriptUrl() : null;
     if (!scriptUrl) {
-      Toast.show('URL del Apps Script no configurada', 'error');
+      toast('URL del Apps Script no configurada', 'error');
       return [];
     }
     try {
       const response = await fetch(scriptUrl + HISTORY_ENDPOINT);
-      const data = await response.json();
-      // Normalize entries
-      purchaseHistory = data.map(entry => ({
+      const raw = await response.json();
+      // Normalize response shape: accept plain array or wrapped objects
+      let rows;
+      if (Array.isArray(raw)) {
+        rows = raw;
+      } else if (raw && Array.isArray(raw.data)) {
+        rows = raw.data;
+      } else if (raw && Array.isArray(raw.result)) {
+        rows = raw.result;
+      } else if (raw && Array.isArray(raw.items)) {
+        rows = raw.items;
+      } else {
+        console.warn('priceLookup: unexpected response shape', raw);
+        rows = [];
+      }
+      purchaseHistory = rows.map(entry => ({
         product: entry.Product || entry.product || '',
         quantity: parseFloat(entry.Quantity || entry.quantity) || 1,
         totalPrice: parseFloat(entry['Total Price'] || entry.totalPrice || entry.TotalPrice) || 0,
@@ -104,7 +126,7 @@
       return purchaseHistory;
     } catch (e) {
       console.error('Error fetching history', e);
-      Toast.show('No se pudo cargar el historial', 'error');
+      toast('No se pudo cargar el historial', 'error');
       return [];
     }
   };
@@ -261,7 +283,7 @@
     if (!selectedProduct) return;
     const observedVal = parseFloat(document.getElementById('observed-price-input').value);
     if (isNaN(observedVal) || observedVal <= 0) {
-      Toast.show('Ingresa un precio observado válido (> 0)', 'error');
+      toast('Ingresa un precio observado válido (> 0)', 'error');
       return;
     }
     const qtyExpr = document.getElementById('quantity-expr-input').value;
@@ -283,7 +305,7 @@
     if (refreshBtn) {
       refreshBtn.addEventListener('click', async () => {
         await fetchHistory();
-        Toast.show('Historial recargado', 'success');
+        toast('Historial recargado', 'success');
         selectedProduct = '';
         document.getElementById('price-search-input').value = '';
         document.getElementById('observed-price-input').value = '';
@@ -296,9 +318,11 @@
     if (backBtn) backBtn.addEventListener('click', () => showView('view-home'));
   };
 
+  // Always attach to DOMContentLoaded to ensure app.js (and Toast) has run first
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
-    init();
+    // DOM is ready but defer to next microtask so app.js globals are initialized
+    setTimeout(init, 0);
   }
 })();

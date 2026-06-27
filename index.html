@@ -111,39 +111,6 @@
     </header>
 
     <main class="review-content">
-      <!-- Consultar Precios Card -->
-        <div class="card menu-card" id="card-price-lookup" aria-label="Consultar precios">
-          <h2>🔎 Consultar precios</h2>
-        </div>
-        
-        <!-- Price Lookup View -->
-        <section id="view-price-lookup" class="view hidden">
-          <header class="app-header">
-            <button id="btn-price-back" class="icon-btn" aria-label="Volver"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
-            <h1>Consultar precios</h1>
-            <div class="header-spacer"></div>
-          </header>
-          <main class="price-lookup-content">
-            <div class="search-bar">
-              <input type="text" id="price-search-input" placeholder="Buscar producto..." />
-              <button id="price-refresh-btn" class="secondary-btn">Cargar historial</button>
-            </div>
-            <ul id="price-suggestion-list" class="suggestion-list hidden"></ul>
-            <div id="price-details" class="details hidden">
-              <div class="observed-price">
-                <label for="observed-price-input">Precio observado</label>
-                <input type="number" id="observed-price-input" step="0.01" placeholder="Ej.: 12.34" />
-              </div>
-              <div class="quantity-expression">
-                <label for="quantity-expr-input">Cantidad (ej.: 2 lt)</label>
-                <input type="text" id="quantity-expr-input" placeholder="Ej.: 2 lt" />
-              </div>
-              <div class="result-panel" id="price-result-panel">
-                <!-- Filled dynamically -->
-              </div>
-            </div>
-          </main>
-        </section>
 
       <!-- Preview de imagen -->
       <div id="preview-container" class="preview-container" style="display:none">
@@ -169,6 +136,85 @@
         Enviar a Google Sheets
       </button>
     </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       VIEW: PRICE LOOKUP
+       ═══════════════════════════════════════ -->
+  <div id="view-price-lookup" class="view">
+    <header class="app-header">
+      <button id="btn-price-back" class="icon-btn" aria-label="Volver">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <h1>Consultar precios</h1>
+      <div class="header-spacer"></div>
+    </header>
+    <main class="price-lookup-content">
+
+      <!-- Búsqueda -->
+      <div class="pl-search-bar">
+        <input type="text" id="price-search-input" placeholder="Buscar producto... (usa -marca para excluir)" autocomplete="off" />
+        <button id="price-refresh-btn" class="icon-btn pl-refresh-btn" aria-label="Recargar historial" title="Recargar historial">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </button>
+      </div>
+      <ul id="price-suggestion-list" class="pl-suggestion-list hidden"></ul>
+
+      <!-- Filtros -->
+      <div class="pl-filters">
+        <div class="pl-filter-group">
+          <label for="filter-store">Tienda</label>
+          <select id="filter-store"><option value="">Todas</option></select>
+        </div>
+        <div class="pl-filter-group">
+          <label for="filter-category">Categoría</label>
+          <select id="filter-category"><option value="">Todas</option></select>
+        </div>
+        <div class="pl-filter-group">
+          <label for="filter-days">Período (días)</label>
+          <input type="number" id="filter-days" min="1" max="3650" value="90" />
+        </div>
+      </div>
+
+      <!-- Panel de comparación -->
+      <div id="price-details" class="pl-details hidden">
+        <div class="pl-inputs-row">
+          <div class="pl-input-group">
+            <label for="observed-price-input">Precio observado ($)</label>
+            <input type="number" id="observed-price-input" step="0.01" min="0" placeholder="Ej.: 12500" />
+          </div>
+          <div class="pl-input-group">
+            <label for="quantity-expr-input">Cantidad / expresión</label>
+            <input type="text" id="quantity-expr-input" placeholder="Ej.: 6*(1100+50)" />
+          </div>
+        </div>
+        <div id="price-badge" class="pl-badge hidden"></div>
+        <div id="price-result-panel" class="pl-result-panel"></div>
+      </div>
+
+      <!-- Tabla histórica del producto -->
+      <div id="pl-history-section" class="pl-table-section hidden">
+        <h3>Historial de compras</h3>
+        <div class="pl-table-wrapper">
+          <table id="pl-history-table" class="pl-table">
+            <thead><tr><th>Fecha</th><th>Tienda</th><th>Cantidad</th><th>Total</th><th>Unitario</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tabla por supermercado -->
+      <div id="pl-store-section" class="pl-table-section hidden">
+        <h3>Resumen por tienda</h3>
+        <div class="pl-table-wrapper">
+          <table id="pl-store-table" class="pl-table">
+            <thead><tr><th>Tienda</th><th>Promedio</th><th>Mínimo</th><th>Última compra</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -215,6 +261,38 @@
           <polyline points="22 4 12 14.01 9 11.01"/>
         </svg>
         <span>Probar Conexión</span>
+      </button>
+
+      <div class="settings-divider"></div>
+
+      <!-- ── Sección: Consultar Precios ── -->
+      <div class="settings-section-title">🔎 Consultar precios</div>
+
+      <div class="settings-group">
+        <label for="settings-analysis-days">Período de análisis (días)</label>
+        <input type="number" id="settings-analysis-days" min="7" max="3650" value="90" placeholder="90">
+        <p class="help-text">Solo se usarán compras dentro de este período para promedios, mínimos y estadísticas.</p>
+      </div>
+
+      <div class="settings-group">
+        <label>Sinónimos de productos</label>
+        <textarea id="settings-synonyms" rows="4" placeholder="leche entera = leche, leche completa&#10;papel = papel higiénico"></textarea>
+        <p class="help-text">Un sinónimo por línea: <code>alias = nombre canónico</code>. Se usarán en la búsqueda.</p>
+      </div>
+
+      <div class="settings-group settings-toggle-row">
+        <div>
+          <label for="settings-learn-toggle">Aprender búsquedas frecuentes</label>
+          <p class="help-text">Muestra el contador de selecciones en las sugerencias.</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settings-learn-toggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <button id="btn-clear-learn" class="secondary-btn" style="align-self:center">
+        Limpiar historial aprendido
       </button>
 
       <div class="settings-divider"></div>

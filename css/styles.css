@@ -121,6 +121,10 @@ a:hover {
   display: flex;
 }
 
+.hidden {
+  display: none !important;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -986,6 +990,8 @@ a:hover {
   max-height: 240px;
   overflow-y: auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 200;
 }
 
 .pl-suggestion-item {
@@ -997,6 +1003,25 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.pl-product-result-label {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+}
+
+.pl-product-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pl-product-checkbox {
+  accent-color: var(--accent);
+  margin-right: 12px;
 }
 
 .pl-suggestion-item:hover {

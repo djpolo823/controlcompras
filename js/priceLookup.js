@@ -1055,24 +1055,6 @@
   };
 
 
-  const onSuggestionClick = ev => {
-    if (ev.target.closest('.pl-product-checkbox')) return;
-    const item = ev.target.closest('.pl-suggestion-item');
-    if (!item) return;
-    const checkbox = item.querySelector('.pl-product-checkbox');
-    if (!checkbox) return;
-    checkbox.checked = !checkbox.checked;
-    const key = checkbox.dataset.key;
-    if (!key) return;
-    if (checkbox.checked) {
-      comparisonSelection.add(key);
-    } else {
-      comparisonSelection.delete(key);
-    }
-    recalcAndRender();
-    renderSuggestions(lastSuggestionGroups, lastSearchQuery, lastQueryTokens);
-  };
-
   const onSuggestionChange = ev => {
     const checkbox = ev.target.closest('.pl-product-checkbox');
     if (!checkbox) return;
@@ -1084,6 +1066,7 @@
       comparisonSelection.delete(key);
     }
     recalcAndRender();
+    renderSuggestions(lastSuggestionGroups, lastSearchQuery, lastQueryTokens);
   };
 
   const focusSuggestionItem = productKey => {
@@ -1163,7 +1146,6 @@
 
     const suggestionList = document.getElementById('price-suggestion-list');
     if (suggestionList) {
-      suggestionList.addEventListener('click', onSuggestionClick);
       suggestionList.addEventListener('change', onSuggestionChange);
       suggestionList.addEventListener('keydown', onSuggestionKeydown);
     }

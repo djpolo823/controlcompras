@@ -314,8 +314,6 @@
   };
 
   const rankProducts = (queryTokens, excludeTokens, filters) => {
-    const now = Date.now();
-    const ms = filters.days * 24 * 60 * 60 * 1000;
     return Object.keys(productIndex)
       .filter(key => {
         // Exclude permanently excluded products or session excluded products
@@ -328,7 +326,7 @@
         if (filters.store || filters.category) {
           return filteredEntries(key, filters).length > 0;
         }
-        return productIndex[key].some(e => now - e.purchaseDate.getTime() <= ms);
+        return true;
       })
       .map(key => {
         const entries = filteredEntries(key, filters);

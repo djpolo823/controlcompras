@@ -158,6 +158,12 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </button>
       </div>
+      <div class="pl-search-toolbar" id="pl-search-toolbar">
+        <button type="button" id="btn-select-all" class="secondary-btn">Seleccionar todos</button>
+        <button type="button" id="btn-deselect-all" class="secondary-btn">Deseleccionar todos</button>
+        <button type="button" id="btn-invert-selection" class="secondary-btn">Invertir selección</button>
+      </div>
+      <div id="pl-saved-comparisons-panel" class="pl-saved-comparisons-panel hidden"></div>
       <ul id="price-suggestion-list" class="pl-suggestion-list hidden"></ul>
 
       <!-- Filtros -->
@@ -294,6 +300,21 @@
       <button id="btn-clear-learn" class="secondary-btn" style="align-self:center">
         Limpiar historial aprendido
       </button>
+
+      <div class="settings-divider"></div>
+
+      <div class="settings-section-title">🔎 Saved Comparisons</div>
+
+      <div class="settings-group">
+        <label for="settings-normalization-rules">Reglas de normalización</label>
+        <textarea id="settings-normalization-rules" rows="4" placeholder="bloq = bloque&#10;lt = l&#10;muzzarella = mozarella"></textarea>
+        <p class="help-text">Un alias por línea: <code>alias = nombre canónico</code>. Se usarán para detectar comparaciones similares.</p>
+      </div>
+
+      <div class="settings-group">
+        <label>Saved Comparisons</label>
+        <div id="pl-family-settings-list" class="pl-family-settings-list"></div>
+      </div>
 
       <div class="settings-divider"></div>
 

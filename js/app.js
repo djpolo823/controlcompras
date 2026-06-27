@@ -99,7 +99,15 @@ function setupEventListeners() {
     renderHistory();
   });
 
-  document.getElementById('btn-back').addEventListener('click', () => {
+  // Price Lookup navigation
+  const priceCard = document.getElementById('card-price-lookup');
+  if (priceCard) {
+    priceCard.addEventListener('click', () => showView('view-price-lookup'));
+  }
+  const btnPriceBack = document.getElementById('btn-price-back');
+  if (btnPriceBack) {
+    btnPriceBack.addEventListener('click', () => showView('view-home'));
+  }
     if (confirm('¿Deseas salir? Perderás los cambios no guardados.')) {
       showView('view-home');
       renderHistory();

@@ -111,6 +111,40 @@ function doPost(e) {
  */
 function doGet(e) {
   console.log("Petición GET recibida");
+  // Handle history request
+  if (e && e.parameter && e.parameter.action === "getHistory") {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (!ss) {
+      try { ss = SpreadsheetApp.openById("1i__e2hyPYKAz32gVxtYHZCWMaId2qA3t716towexuPU"); }
+      catch (err) { console.error("Error al abrir spreadsheet por ID: " + err.toString()); }
+    }
+    if (!ss) {
+      return _jsonResponse({ status: "error", message: "No spreadsheet found" });
+    }
+    var sheet = ss.getSheetByName("Recibos");
+    if (!sheet) {
+      var sheets = ss.getSheets();
+      for (var i = 0; i < sheets.length; i++) {
+        if (sheets[i].getName().trim().toLowerCase() === "recibos") { sheet = sheets[i]; break; }
+      }
+    }
+    if (!sheet) {
+      return _jsonResponse({ status: "error", message: "Sheet 'Recibos' not found" });
+    }
+    var rows = sheet.getDataRange().getValues();
+    var filtered = rows.map(function(r) {
+      return {
+        product: r[0] || "",
+        quantity: r[1] || "",
+        totalPrice: r[2] || "",
+        purchaseDate: r[4] || "",
+        store: r[3] || "",
+        category: r[5] || ""
+      };
+    });
+    return _jsonResponse({ status: "ok", data: filtered });
+  }
+  // Default response
   return _jsonResponse({
     status: "ok",
     message: "Gastos IA endpoint activo",
@@ -118,6 +152,7 @@ function doGet(e) {
     timestamp: new Date().toISOString()
   });
 }
+
 
 /**
  * Helper para crear respuestas JSON con CORS headers

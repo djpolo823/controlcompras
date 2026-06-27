@@ -184,6 +184,34 @@
     return result;
   };
 
+  const parseSafeDate = (dateVal) => {
+    if (!dateVal) return new Date(NaN);
+    if (dateVal instanceof Date) return dateVal;
+    
+    const str = dateVal.toString().trim();
+    
+    // Check for DD/MM/YYYY format
+    const slashParts = str.split('/');
+    if (slashParts.length === 3) {
+      const day = parseInt(slashParts[0], 10);
+      const month = parseInt(slashParts[1], 10) - 1; // 0-indexed in JS
+      const year = parseInt(slashParts[2], 10);
+      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+        // Adjust for 2-digit years if any
+        const fullYear = year < 100 ? (year + 2000) : year;
+        return new Date(fullYear, month, day);
+      }
+    }
+    
+    // Check for standard parsing
+    const parsed = new Date(str);
+    if (!isNaN(parsed.getTime())) return parsed;
+    
+    // Check for Timestamp format or ISO
+    const isoParsed = new Date(str.replace(/-/g, '/'));
+    return isoParsed;
+  };
+
   // ----- Fetch history -----
   const fetchHistory = async () => {
     const scriptUrl = (typeof Storage !== 'undefined') ? Storage.getScriptUrl() : null;
@@ -217,7 +245,7 @@
           product: (entry.Product || entry.product || '').toString().trim(),
           quantity: parseFloat(entry.Quantity || entry.quantity) || 1,
           totalPrice: parseFloat(entry['Total Price'] || entry.totalPrice || entry.TotalPrice) || 0,
-          purchaseDate: new Date(entry['Purchase Date'] || entry.purchaseDate || entry.PurchaseDate),
+          purchaseDate: parseSafeDate(entry['Purchase Date'] || entry.purchaseDate || entry.PurchaseDate),
           store: (entry.Store || entry.store || '').toString().trim(),
           category: (entry.Category || entry.category || '').toString().trim(),
         }))

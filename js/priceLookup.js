@@ -118,6 +118,11 @@
   };
 
   // ----- Helpers -----
+  const debounce = (fn, delay) => (...args) => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => fn(...args), delay);
+  };
+
   const normalize = str => (str || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 
   // ----- Safe recursive-descent arithmetic parser (no eval) -----

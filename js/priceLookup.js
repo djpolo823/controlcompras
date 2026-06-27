@@ -297,12 +297,22 @@
     });
   };
 
-  const renderSuggestions = suggestions => {
+  const renderSuggestions = (suggestions, query = '') => {
     const listEl = document.getElementById('price-suggestion-list');
     if (!listEl) return;
+    if (purchaseHistory.length === 0) {
+      listEl.innerHTML = `<li class="pl-suggestion-no-match">⚠️ El historial de compras está vacío. Pulsa el botón 🔄 para recargar.</li>`;
+      listEl.classList.remove('hidden');
+      return;
+    }
     if (!suggestions.length) {
-      listEl.innerHTML = '';
-      listEl.classList.add('hidden');
+      if (query) {
+        listEl.innerHTML = `<li class="pl-suggestion-no-match">No se encontraron productos para "${query}"</li>`;
+        listEl.classList.remove('hidden');
+      } else {
+        listEl.innerHTML = '';
+        listEl.classList.add('hidden');
+      }
       return;
     }
     listEl.innerHTML = suggestions.map(p => {
@@ -348,7 +358,7 @@
 
   const onSearchInput = debounce(ev => {
     const raw = normalize(ev.target.value);
-    if (!raw) { renderSuggestions([]); return; }
+    if (!raw) { renderSuggestions([], ''); return; }
     const filters = getFilters();
     const tokens = raw.split(/\s+/).filter(t => t);
     
@@ -363,7 +373,7 @@
       .map(t => t.slice(1));
 
     const matches = rankProducts(include, exclude, filters).slice(0, 10);
-    renderSuggestions(matches);
+    renderSuggestions(matches, raw);
   }, DEBOUNCE_MS);
 
   // ----- Trend calculation -----

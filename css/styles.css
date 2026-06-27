@@ -1003,6 +1003,14 @@ a:hover {
   background: var(--surface-hover);
 }
 
+.pl-suggestion-no-match {
+  padding: 12px 16px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-style: italic;
+  text-align: center;
+}
+
 .pl-learn-badge {
   font-size: 0.75rem;
   background: var(--accent-glow-strong);

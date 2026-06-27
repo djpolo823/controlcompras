@@ -658,8 +658,8 @@
 
   const init = async () => {
     loadPrefs();
-    await fetchHistory();
 
+    // Register all UI listeners synchronously so they work immediately
     const searchInput = document.getElementById('price-search-input');
     if (searchInput) searchInput.addEventListener('input', onSearchInput);
 
@@ -722,6 +722,9 @@
         }
       });
     }
+
+    // Load history in the background without blocking the UI init
+    fetchHistory().catch(err => console.error('Background fetchHistory error:', err));
   };
 
   if (document.readyState === 'loading') {

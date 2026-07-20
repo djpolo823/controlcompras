@@ -213,6 +213,8 @@ async function handleImageSelection(event) {
     
     AppState.currentItems = items;
     renderReviewScreen();
+    // HOOK – Payment Accounts: resolve selection and render trigger
+    if (window.PaymentAccounts) window.PaymentAccounts.onReviewOpen();
     showView('view-review');
     Toast.show('¡Clasificación completada!', 'success');
   } catch (error) {
@@ -379,8 +381,13 @@ async function sendExpensesToSheet() {
 
   Toast.show('Enviando datos a Google Sheets...', 'info');
 
+  // HOOK – Payment Accounts: get selected account name for Column G
+  const paymentAccountName = (window.PaymentAccounts)
+    ? window.PaymentAccounts.getSelectedName()
+    : '';
+
   try {
-    const result = await SheetsService.sendToSheet(items);
+    const result = await SheetsService.sendToSheet(items, paymentAccountName);
     
     // Guardar en el historial local
     Storage.addToHistory({
@@ -389,15 +396,23 @@ async function sendExpensesToSheet() {
       itemCount: items.length
     });
 
-    Toast.show(result.note || '¡Datos enviados correctamente!', 'success');
-    
-    // Volver a inicio
+    // Reset app state
     AppState.currentItems = [];
     AppState.imagePreviewUrl = null;
-    
-    showView('view-home');
-    checkConfiguration();
-    renderHistory();
+
+    // HOOK – Payment Accounts: record usage, show success overlay, then go home
+    const goHome = () => {
+      showView('view-home');
+      checkConfiguration();
+      renderHistory();
+    };
+
+    if (window.PaymentAccounts) {
+      window.PaymentAccounts.onSubmitSuccess(paymentAccountName, goHome);
+    } else {
+      Toast.show(result.note || '¡Datos enviados correctamente!', 'success');
+      goHome();
+    }
   } catch (error) {
     console.error('Error al enviar a Sheets:', error);
     Toast.show('Error al enviar: ' + error.message, 'error');
@@ -413,6 +428,8 @@ function openSettings() {
   document.getElementById('input-script-url').value = Storage.getScriptUrl();
   document.getElementById('connection-status').innerHTML = '';
   showView('view-settings');
+  // HOOK – Payment Accounts: lazy seed + render settings panel
+  if (window.PaymentAccounts) window.PaymentAccounts.onSettingsOpen();
 }
 
 // Guarda los datos de configuración

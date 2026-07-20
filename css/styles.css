@@ -1588,3 +1588,648 @@ a:hover {
   padding-right: 16px;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   PAYMENT ACCOUNTS MODULE
+   All selectors are prefixed with pa- to avoid conflicts.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Review screen: "Pagado desde" section ─── */
+.pa-review-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  margin: 0 0 8px 0;
+}
+
+.pa-review-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.pa-selector-trigger {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.1s;
+  min-width: 0;
+}
+
+.pa-selector-trigger:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.pa-selector-trigger:active {
+  transform: scale(0.98);
+}
+
+.pa-trigger-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.pa-trigger-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pa-trigger-arrow {
+  font-size: 20px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ─── Modal backdrop ─── */
+.pa-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.pa-modal-backdrop.pa-modal-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ─── Modal sheet ─── */
+.pa-modal-sheet {
+  width: 100%;
+  max-width: 480px;
+  max-height: 82vh;
+  background: #16161f;
+  border-radius: 20px 20px 0 0;
+  border: 1px solid var(--glass-border);
+  border-bottom: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(24px);
+  transition: transform 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.pa-modal-backdrop.pa-modal-open .pa-modal-sheet {
+  transform: translateY(0);
+}
+
+.pa-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--glass-border);
+  flex-shrink: 0;
+}
+
+.pa-modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.pa-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-hover);
+  border: none;
+  color: var(--text-secondary);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pa-modal-close:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* ─── Selector body (scrollable) ─── */
+.pa-selector-body {
+  overflow-y: auto;
+  padding: 10px 12px 24px;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pa-group-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 12px 8px 6px;
+}
+
+.pa-account-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  margin-bottom: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  text-align: left;
+}
+
+.pa-account-card:hover {
+  background: var(--surface-hover);
+  border-color: var(--glass-border);
+}
+
+.pa-account-card.pa-card-selected {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: var(--accent);
+}
+
+.pa-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.pa-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pa-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pa-card-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pa-card-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.pa-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+
+.pa-badge-default {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.pa-badge-last {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+}
+
+.pa-card-check {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+/* ─── Archive / small confirmation dialog ─── */
+.pa-dialog-sheet {
+  border-radius: 20px;
+  margin: auto;
+  max-width: 360px;
+  width: calc(100% - 32px);
+  padding: 24px;
+  transform: scale(0.95);
+  transition: transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.pa-modal-backdrop.pa-modal-open .pa-dialog-sheet {
+  transform: scale(1);
+}
+
+.pa-dialog-body {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 12px 0 20px;
+  line-height: 1.5;
+}
+
+.pa-dialog-body strong {
+  color: var(--text-primary);
+}
+
+.pa-dialog-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.pa-btn-danger {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  transition: background 0.2s;
+}
+
+.pa-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+/* ─── Editor dialog ─── */
+.pa-editor-sheet {
+  border-radius: 20px 20px 0 0;
+  max-height: 90vh;
+}
+
+.pa-editor-body {
+  overflow-y: auto;
+  padding: 16px 20px;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pa-editor-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+
+.pa-editor-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ─── Color picker swatches ─── */
+.pa-color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.pa-color-swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.pa-color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.pa-color-swatch.pa-swatch-selected {
+  border-color: white;
+  transform: scale(1.15);
+}
+
+/* ─── Icon picker ─── */
+.pa-icon-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.pa-icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid transparent;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.pa-icon-btn:hover {
+  background: var(--surface-hover);
+  transform: scale(1.05);
+}
+
+.pa-icon-btn.pa-icon-selected {
+  background: var(--accent-glow);
+  border-color: var(--accent);
+  transform: scale(1.05);
+}
+
+/* ─── Settings: Dashboard summary card ─── */
+.pa-dashboard-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pa-dash-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.pa-dash-row strong {
+  color: var(--text-primary);
+}
+
+.pa-dash-sep {
+  color: var(--text-muted);
+}
+
+.pa-dash-main {
+  font-weight: 500;
+}
+
+/* ─── Settings: Add button ─── */
+.pa-add-btn {
+  align-self: flex-start;
+  margin-bottom: 10px;
+}
+
+/* ─── Settings: Account list ─── */
+.pa-settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.pa-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  transition: background 0.15s;
+}
+
+.pa-list-item:hover {
+  background: var(--surface-hover);
+}
+
+.pa-list-archived {
+  opacity: 0.6;
+}
+
+.pa-drag-handle {
+  cursor: grab;
+  color: var(--text-muted);
+  font-size: 16px;
+  padding: 0 2px;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.pa-drag-handle:active {
+  cursor: grabbing;
+}
+
+.pa-list-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.pa-list-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pa-list-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pa-list-meta {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.pa-list-badge {
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.pa-list-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.pa-btn-edit,
+.pa-btn-archive,
+.pa-btn-restore {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  background: var(--surface-hover);
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.pa-btn-edit:hover {
+  background: rgba(59, 130, 246, 0.15);
+  transform: scale(1.05);
+}
+
+.pa-btn-archive:hover {
+  background: rgba(245, 158, 11, 0.15);
+  transform: scale(1.05);
+}
+
+.pa-btn-restore:hover {
+  background: rgba(16, 185, 129, 0.15);
+  transform: scale(1.05);
+}
+
+.pa-archived-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 8px 4px 4px;
+}
+
+/* ─── Drag & drop visual states ─── */
+.pa-list-item.pa-dragging {
+  opacity: 0.4;
+  border-style: dashed;
+}
+
+.pa-list-item.pa-drag-over {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+/* ─── Empty message ─── */
+.pa-empty-msg {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 24px 16px;
+}
+
+/* ─── Success Overlay ─── */
+.pa-success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.pa-success-overlay.pa-overlay-visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.pa-success-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: #16161f;
+  border: 1px solid var(--accent);
+  border-radius: 24px;
+  padding: 32px 40px;
+  box-shadow: 0 0 40px var(--accent-glow-strong);
+  transform: scale(0.92);
+  transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.pa-success-overlay.pa-overlay-visible .pa-success-card {
+  transform: scale(1);
+}
+
+.pa-success-check {
+  font-size: 42px;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.pa-success-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.pa-success-account {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* ─── Prevent body scroll when modal is open ─── */
+body.pa-no-scroll {
+  overflow: hidden;
+}
+
+

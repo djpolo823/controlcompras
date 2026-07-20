@@ -11,7 +11,12 @@ const SheetsService = {
    * @param {Array} items — Array de objetos ExpenseItem
    * @returns {Promise<Object>} — Respuesta del script
    */
-  async sendToSheet(items) {
+  /**
+   * Envía items clasificados al Google Sheet.
+   * @param {Array}  items              — Array de objetos ExpenseItem
+   * @param {string} [paymentAccountName=''] — Nombre de la cuenta de pago (Column G / index 6)
+   */
+  async sendToSheet(items, paymentAccountName = '') {
     const scriptUrl = Storage.getScriptUrl();
     if (!scriptUrl) throw new Error('URL del Apps Script no configurada');
 
@@ -21,8 +26,8 @@ const SheetsService = {
       item.price,
       item.establishment,
       item.date,
-      '', // Columna 6 vacía
-      '', // Columna 7 vacía
+      '',                        // Columna F — vacía (reservada)
+      paymentAccountName || '',  // Columna G — cuenta de pago
       item.category,
     ]);
 

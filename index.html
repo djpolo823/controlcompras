@@ -123,6 +123,16 @@
         <span id="total-price">Total: $0</span>
       </div>
 
+      <!-- Selector de cuenta de pago (Pagado desde) -->
+      <div id="pa-review-section" class="pa-review-section" style="display:none">
+        <span class="pa-review-label">Pagado desde</span>
+        <button id="pa-selector-trigger" type="button" class="pa-selector-trigger" aria-haspopup="dialog">
+          <span class="pa-trigger-icon">🏦</span>
+          <span class="pa-trigger-name" style="color:#9ca3af">Seleccionar cuenta…</span>
+          <span class="pa-trigger-arrow">›</span>
+        </button>
+      </div>
+
       <!-- Lista de items -->
       <div id="items-list" class="items-list"></div>
     </main>
@@ -271,6 +281,28 @@
 
       <div class="settings-divider"></div>
 
+      <!-- ── Sección: Cuentas de pago ── -->
+      <div class="settings-section-title">💳 Cuentas de pago</div>
+
+      <!-- Dashboard card -->
+      <div id="pa-dashboard-card" class="pa-dashboard-card"></div>
+
+      <!-- Add button -->
+      <button type="button" id="pa-settings-add-btn" class="secondary-btn pa-add-btn">
+        + Nueva cuenta
+      </button>
+
+      <!-- Active accounts list -->
+      <div id="pa-active-list" class="pa-settings-list"></div>
+
+      <!-- Archived accounts -->
+      <div id="pa-archived-section" style="display:none">
+        <div class="pa-archived-label">Archivadas</div>
+        <div id="pa-archived-list" class="pa-settings-list"></div>
+      </div>
+
+      <div class="settings-divider"></div>
+
       <!-- ── Sección: Consultar Precios ── -->
       <div class="settings-section-title">🔎 Consultar precios</div>
 
@@ -330,6 +362,94 @@
   </div>
 
   <!-- ═══════════════════════════════════════
+       PAYMENT ACCOUNTS – MODALS & OVERLAYS
+       ═══════════════════════════════════════ -->
+
+  <!-- 1. Account Selector Modal -->
+  <div id="pa-selector-modal" class="pa-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="pa-selector-title">
+    <div class="pa-modal-sheet">
+      <div class="pa-modal-header">
+        <h2 id="pa-selector-title" class="pa-modal-title">Pagado desde</h2>
+        <button id="pa-selector-close" type="button" class="pa-modal-close" aria-label="Cerrar">×</button>
+      </div>
+      <!-- Future: search bar placeholder -->
+      <div id="pa-selector-body" class="pa-selector-body"></div>
+    </div>
+  </div>
+
+  <!-- 2. Archive Confirmation Dialog -->
+  <div id="pa-archive-dialog" class="pa-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="pa-archive-title">
+    <div class="pa-modal-sheet pa-dialog-sheet">
+      <h2 id="pa-archive-title" class="pa-modal-title">Archivar cuenta</h2>
+      <p class="pa-dialog-body">¿Deseas archivar: <strong class="pa-dialog-account-name"></strong>?</p>
+      <div class="pa-dialog-actions">
+        <button id="pa-archive-cancel" type="button" class="secondary-btn">Cancelar</button>
+        <button id="pa-archive-confirm" type="button" class="pa-btn-danger">Archivar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Account Editor Dialog -->
+  <div id="pa-editor-dialog" class="pa-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="pa-editor-title">
+    <div class="pa-modal-sheet pa-editor-sheet">
+      <div class="pa-modal-header">
+        <h2 id="pa-editor-title" class="pa-modal-title">Nueva cuenta</h2>
+        <button id="pa-editor-cancel" type="button" class="pa-modal-close" aria-label="Cerrar">×</button>
+      </div>
+      <div class="pa-editor-body">
+        <div class="settings-group">
+          <label for="pa-editor-name">Nombre</label>
+          <input type="text" id="pa-editor-name" placeholder="Ej: Bancolombia Ahorros" autocomplete="off" class="pa-editor-input">
+        </div>
+        <div class="settings-group">
+          <label for="pa-editor-type">Tipo</label>
+          <select id="pa-editor-type" class="pa-editor-input">
+            <option value="bank">Banco</option>
+            <option value="credit_card">Tarjeta de crédito</option>
+            <option value="wallet">Billetera digital</option>
+            <option value="cash">Efectivo</option>
+          </select>
+        </div>
+        <div class="settings-group">
+          <label>Color</label>
+          <div id="pa-color-picker" class="pa-color-picker"></div>
+        </div>
+        <div class="settings-group">
+          <label>Icono</label>
+          <div id="pa-icon-picker" class="pa-icon-picker"></div>
+        </div>
+        <div class="settings-group">
+          <label for="pa-editor-description">Notas</label>
+          <textarea id="pa-editor-description" rows="2" placeholder="Información adicional (no visible en el selector)" class="pa-editor-input"></textarea>
+        </div>
+        <div class="settings-group settings-toggle-row">
+          <div>
+            <label for="pa-editor-is-default">Cuenta predeterminada</label>
+            <p class="help-text">Se seleccionará automáticamente al revisar un recibo.</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="pa-editor-is-default">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="pa-dialog-actions">
+        <button id="pa-editor-cancel-bottom" type="button" class="secondary-btn" onclick="document.getElementById('pa-editor-dialog').classList.remove('pa-modal-open'); document.body.classList.remove('pa-no-scroll');">Cancelar</button>
+        <button id="pa-editor-save" type="button" class="primary-btn">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Success Overlay -->
+  <div id="pa-success-overlay" class="pa-success-overlay">
+    <div class="pa-success-card">
+      <span class="pa-success-check">✓</span>
+      <span class="pa-success-title">Gasto guardado</span>
+      <span class="pa-success-account"></span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
        TOAST (notificaciones)
        ═══════════════════════════════════════ -->
   <div id="toast" class="toast"></div>
@@ -341,6 +461,7 @@
   <script src="js/gemini.js"></script>
   <script src="js/sheets.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/paymentAccounts.js"></script>
 <script src="js/priceLookup.js"></script>
 
   <!-- Service Worker Registration -->

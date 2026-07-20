@@ -649,10 +649,10 @@
   };
 
   const toggleFamilyExpanded = familyKey => {
-    if (expandedFamilies.has(familyKey)) {
-      expandedFamilies.delete(familyKey);
+    if (expandedGroups.has(familyKey)) {
+      expandedGroups.delete(familyKey);
     } else {
-      expandedFamilies.add(familyKey);
+      expandedGroups.add(familyKey);
     }
   };
 

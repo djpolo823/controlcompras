@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gastos-ia-v2';
+const CACHE_NAME = 'gastos-ia-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const STATIC_ASSETS = [
   './js/gemini.js',
   './js/sheets.js',
   './js/storage.js',
+  './js/priceLookup.js',
   './manifest.json',
   './icons/icon.svg'
 ];
